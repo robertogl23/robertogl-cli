@@ -1,0 +1,11 @@
+{
+  "name": "robertogl-cli",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "create-rob-app" : "node packages/create-rob-app/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Roberto Carlos Galicia Lopez",
+  "license": "ISC"
+}
