@@ -10,17 +10,32 @@ const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== "false";
 const cssRegex = /\.css$/;
 
 // common function to get style loaders
-module.exports = function (webpackEnv) {
+module.exports = function (webpackEnv, robConfig) {
   const isEnvDevelopment = webpackEnv === "development";
   const isEnvProduction = webpackEnv === "production";
-
+  if (!robConfig) {
+    
+    return {
+      mode: isEnvProduction ? "production" : isEnvDevelopment && "development",
+      devtool: isEnvProduction ? false : "cheap-module-source-map",
+      entry: paths.appIndexJs,
+      output: {
+        // The build folder.
+        path: paths.appBuild,
+        // Add /* filename */ comments to generated require()s in the output.
+        pathinfo: isEnvDevelopment,
+        publicPath: "",
+        // There will be one main bundle, and one file per asynchronous chunk.
+        // In development, it does not produce real files.
+        filename: isEnvProduction
+          ? "[name].[contenthash:8].js"
+          : isEnvDevelopment && "[name].js",
+      },
+    };
+  }
   return {
     mode: isEnvProduction ? "production" : isEnvDevelopment && "development",
-    devtool: isEnvProduction
-      ? shouldUseSourceMap
-        ? false
-        : false
-      : isEnvDevelopment && "cheap-module-source-map",
+    devtool: isEnvProduction ? false : "cheap-module-source-map",
     entry: paths.appIndexJs,
     output: {
       // The build folder.
@@ -33,11 +48,6 @@ module.exports = function (webpackEnv) {
       filename: isEnvProduction
         ? "static/js/[name].[contenthash:8].js"
         : isEnvDevelopment && "static/js/[name].js",
-      // There are also additional JS chunk files if you use code splitting.
-      chunkFilename: isEnvProduction
-        ? "static/js/[name].[contenthash:8].chunk.js"
-        : isEnvDevelopment && "static/js/[name].chunk.js",
-      assetModuleFilename: "static/media/[name].[hash][ext]",
     },
     optimization: {
       minimize: isEnvProduction,
