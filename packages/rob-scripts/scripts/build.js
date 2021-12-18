@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 const webpack = require("webpack");
 const fs = require("fs-extra");
-
+const chalk = require("chalk");
 const configFactory = require("../config/webpack.config");
 const paths = require("../config/paths");
-
+const { resolveOwn, resolveApp } = require("../config/reselve-app-path");
+const newPaths = require("../config/news-paths");
 // Generate configuration
-const config = configFactory("production");
 
-function build() {
-  const compiler = webpack(config);
+function build(webpackConfig) {
+  const compiler = webpack(webpackConfig);
   compiler.run((err, stats) => {
     if (err) {
       console.error(err.stack || err);
@@ -26,7 +26,10 @@ function build() {
       console.warn(info.warnings);
     }
     if (!stats.hasErrors()) {
-      console.log("Build OK");
+      console.log(stats.toString({ colors: true }));
+      console.log(chalk.blue("Build complete."));
+      console.log(chalk.blue(stats.compilation.outputOptions.path));
+      console.log(chalk.blue(stats.compilation.outputOptions.scriptType));
     }
   });
 }
@@ -34,11 +37,19 @@ function build() {
 function copyPublicFolder() {
   fs.copySync(paths.appPublic, paths.appBuild, {
     dereference: true,
-    filter: file => file !== paths.appHtml,
+    filter: (file) => file !== paths.appHtml,
   });
 }
-
-
+if (!fs.existsSync(paths.appRobConfig)) {
+  const config = configFactory("production", false);
+  build(config);
+  return;
+}
+const robConfig = require(paths.appRobConfig);
+const newConfig = newPaths(robConfig.pathsFiles);
+const config = configFactory("production", newConfig);
 fs.emptyDirSync(paths.appBuild);
-copyPublicFolder();
-build();
+if(fs.existsSync(paths.appPublic)){
+  copyPublicFolder();
+}
+build(config);
