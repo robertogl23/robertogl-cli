@@ -3,9 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "create-rob-app" : "node packages/create-rob-app/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "cd packages/rob-scripts && node bin/rob-scripts.js start",
+    "build": "cd packages/rob-scripts && node bin/rob-scripts.js build",
+    "test": "jest"
   },
   "author": "Roberto Carlos Galicia Lopez",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@swc/cli": "^0.1.55",
+    "@swc/core": "^1.2.120",
+    "swc-loader": "^0.1.15"
+  },
+  "devDependencies": {
+    "jest": "^27.4.5"
+  }
 }

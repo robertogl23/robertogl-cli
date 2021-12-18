@@ -1,20 +1,16 @@
-const paths = require("./paths");
+const pathsConfig = require("./paths");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-// Source maps are resource heavy and can cause out of memory issue for large source files.
-const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== "false";
-
 const cssRegex = /\.css$/;
-
+let paths = pathsConfig;
 // common function to get style loaders
 module.exports = function (webpackEnv, robConfig) {
   const isEnvDevelopment = webpackEnv === "development";
   const isEnvProduction = webpackEnv === "production";
   if (!robConfig) {
-    
     return {
       mode: isEnvProduction ? "production" : isEnvDevelopment && "development",
       devtool: isEnvProduction ? false : "cheap-module-source-map",
@@ -31,8 +27,22 @@ module.exports = function (webpackEnv, robConfig) {
           ? "[name].[contenthash:8].js"
           : isEnvDevelopment && "[name].js",
       },
+      module: {
+        rules: [
+          {
+            test: /\.m?js$/,
+            exclude: /(node_modules|bower_components)/,
+            use: {
+              // `.swcrc` can be used to configure swc
+              loader: 'swc-loader'
+            }
+          }
+        ],
+      },
     };
   }
+  paths = Object.assign(paths, robConfig.pathsFiles);
+  console.table(paths);
   return {
     mode: isEnvProduction ? "production" : isEnvDevelopment && "development",
     devtool: isEnvProduction ? false : "cheap-module-source-map",
@@ -92,7 +102,10 @@ module.exports = function (webpackEnv, robConfig) {
         {
           test: /\.m?js$/,
           exclude: /(node_modules|bower_components)/,
-          loader: "babel-loader",
+          use: {
+            // `.swcrc` can be used to configure swc
+            loader: 'swc-loader'
+          }
         },
         {
           test: cssRegex,
