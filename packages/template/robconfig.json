@@ -1,6 +1,7 @@
 {
     "pathsFiles":{
         "appIndexJs": "index.js",
-        "appHtml": "public/index.html"
+        "appHtml": "index.html",
+        "appPublic": ""
     }
 }
