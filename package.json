@@ -5,15 +5,12 @@
   "scripts": {
     "start": "cd packages/rob-scripts && node bin/rob-scripts.js start",
     "build": "cd packages/rob-scripts && node bin/rob-scripts.js build",
+    "publish": "cd packages/rob-scripts && npm publish",
     "test": "jest"
   },
   "author": "Roberto Carlos Galicia Lopez",
   "license": "ISC",
-  "dependencies": {
-    "@swc/cli": "^0.1.55",
-    "@swc/core": "^1.2.120",
-    "swc-loader": "^0.1.15"
-  },
+  "dependencies": {},
   "devDependencies": {
     "jest": "^27.4.5"
   }
