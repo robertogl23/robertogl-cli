@@ -31,12 +31,29 @@ module.exports = function (webpackEnv, robConfig) {
         rules: [
           {
             test: /\.m?js$/,
-            exclude: /(node_modules|bower_components)/,
+            exclude: /(node_modules)/,
             use: {
               // `.swcrc` can be used to configure swc
-              loader: 'swc-loader'
-            }
-          }
+              loader: "swc-loader",
+              options: {
+                jsc: {
+                  parser: {
+                    syntax: "ecmascript",
+                    jsx: true,
+                  },
+                  transform: {
+                    react: {
+                      pragma: "React.createElement",
+                      pragmaFrag: "React.Fragment",
+                      throwIfNamespace: true,
+                      development: false,
+                      useBuiltins: false,
+                    },
+                  },
+                },
+              },
+            },
+          },
         ],
       },
     };
@@ -101,11 +118,28 @@ module.exports = function (webpackEnv, robConfig) {
       rules: [
         {
           test: /\.m?js$/,
-          exclude: /(node_modules|bower_components)/,
+          exclude: /(node_modules)/,
           use: {
             // `.swcrc` can be used to configure swc
-            loader: 'swc-loader'
-          }
+            loader: "swc-loader",
+            options: {
+              jsc: {
+                parser: {
+                  syntax: "ecmascript",
+                  jsx: true,
+                },
+                transform: {
+                  react: {
+                    pragma: "React.createElement",
+                    pragmaFrag: "React.Fragment",
+                    throwIfNamespace: true,
+                    development: false,
+                    useBuiltins: false,
+                  },
+                },
+              },
+            },
+          },
         },
         {
           test: cssRegex,
