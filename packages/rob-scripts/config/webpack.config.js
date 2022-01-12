@@ -41,7 +41,7 @@ module.exports = function (webpackEnv, robConfig) {
       },
     };
   }
-  paths = Object.assign(paths, robConfig.pathsFiles);
+  paths = Object.assign(paths, robConfig);
   console.table(paths);
   return {
     mode: isEnvProduction ? "production" : isEnvDevelopment && "development",

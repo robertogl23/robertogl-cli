@@ -4,8 +4,8 @@ const fs = require("fs-extra");
 const chalk = require("chalk");
 const configFactory = require("../config/webpack.config");
 const paths = require("../config/paths");
-const { resolveOwn, resolveApp } = require("../config/reselve-app-path");
 const newPaths = require("../config/news-paths");
+const isTempleteRun = require("../config/is-templete-run");
 // Generate configuration
 
 function build(webpackConfig) {
@@ -46,7 +46,7 @@ if (!fs.existsSync(paths.appRobConfig)) {
   return;
 }
 const robConfig = require(paths.appRobConfig);
-const newConfig = newPaths(robConfig.pathsFiles);
+const newConfig = newPaths(robConfig.pathsFiles,isTempleteRun());
 const config = configFactory("production", newConfig);
 fs.emptyDirSync(paths.appBuild);
 if(fs.existsSync(paths.appPublic)){

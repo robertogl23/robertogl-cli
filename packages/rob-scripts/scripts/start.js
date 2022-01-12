@@ -1,15 +1,25 @@
 #!/usr/bin/env node
-
-
 const configFactory = require('../config/webpack.config');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const paths = require('../config/paths');
+const fs = require("fs-extra");
+const newPaths = require("../config/news-paths");
+const isTempleteRun = require("../config/is-templete-run");
 
-// Tools like Cloud9 rely on this.
 const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;
-const config = configFactory('development');
-const compiler = webpack(config);
+let compiler;
+
+if (!fs.existsSync(paths.appRobConfig)) {
+  const config = configFactory("development", false);
+  compiler = webpack(config);
+} else {
+  const robConfig = require(paths.appRobConfig);
+  const newConfig = newPaths(robConfig.pathsFiles,isTempleteRun());
+  const config = configFactory("development", newConfig);
+  compiler = webpack(config);
+  
+}
 
 const devServerOptions = {
   // open: true,
@@ -23,7 +33,7 @@ const devServerOptions = {
   },
   historyApiFallback: true,
 };
-
+console.log(paths.appPublic);
 const server = new WebpackDevServer(devServerOptions, compiler);
 
 const runServer = async () => {
