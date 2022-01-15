@@ -28,7 +28,8 @@
     "swc-loader": "^0.1.15",
     "terser-webpack-plugin": "^5.2.5",
     "webpack": "^5.64.2",
-    "webpack-dev-server": "^4.7.3"
+    "webpack-dev-server": "^4.7.3",
+    "workbox-webpack-plugin": "^6.4.2"
   },
   "browserslist": "> 0.25%, not dead, not ie 11",
   "devDependencies": {}
