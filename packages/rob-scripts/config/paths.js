@@ -11,6 +11,7 @@ module.exports = {
   appIndexJs: resolveApp("src/index.js"),
   appSrc: resolveApp("src"),
   appRobConfig: resolveApp("robconfig.json"),
+  appPackageJson: resolveApp("package.json"),
   publicUrlOrPath: "",
 };
 
@@ -25,6 +26,7 @@ if (
     appHtml: resolveOwn(`${templatePath}/public/index.html`),
     appIndexJs: resolveOwn(`${templatePath}/index.js`),
     // appIndexJs: resolveOwn(`${templatePath}/src/index.js`),
+    appPackageJson: resolveOwn(`${templatePath}/package.json`),
     appSrc: resolveOwn("src"),
     appRobConfig: resolveOwn(`${templatePath}/robconfig.json`),
     publicUrlOrPath: ".",
