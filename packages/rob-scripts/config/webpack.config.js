@@ -6,7 +6,26 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const cssRegex = /\.css$/;
 let paths = pathsConfig;
-// common function to get style loaders
+
+
+const swcOptions =  {
+  jsc: {
+    parser: {
+      syntax: "ecmascript",
+      jsx: true,
+    },
+    transform: {
+      react: {
+        pragma: "React.createElement",
+        pragmaFrag: "React.Fragment",
+        throwIfNamespace: true,
+        development: false,
+        useBuiltins: false,
+      },
+    },
+  },
+};
+
 module.exports = function (webpackEnv, robConfig) {
   const isEnvDevelopment = webpackEnv === "development";
   const isEnvProduction = webpackEnv === "production";
@@ -16,13 +35,9 @@ module.exports = function (webpackEnv, robConfig) {
       devtool: isEnvProduction ? false : "cheap-module-source-map",
       entry: paths.appIndexJs,
       output: {
-        // The build folder.
         path: paths.appBuild,
-        // Add /* filename */ comments to generated require()s in the output.
         pathinfo: isEnvDevelopment,
         publicPath: "",
-        // There will be one main bundle, and one file per asynchronous chunk.
-        // In development, it does not produce real files.
         filename: isEnvProduction
           ? "[name].[contenthash:8].js"
           : isEnvDevelopment && "[name].js",
@@ -33,25 +48,8 @@ module.exports = function (webpackEnv, robConfig) {
             test: /\.m?js$/,
             exclude: /(node_modules)/,
             use: {
-              // `.swcrc` can be used to configure swc
               loader: "swc-loader",
-              options: {
-                jsc: {
-                  parser: {
-                    syntax: "ecmascript",
-                    jsx: true,
-                  },
-                  transform: {
-                    react: {
-                      pragma: "React.createElement",
-                      pragmaFrag: "React.Fragment",
-                      throwIfNamespace: true,
-                      development: false,
-                      useBuiltins: false,
-                    },
-                  },
-                },
-              },
+              options:swcOptions,
             },
           },
         ],
@@ -59,7 +57,6 @@ module.exports = function (webpackEnv, robConfig) {
     };
   }
   paths = Object.assign(paths, robConfig);
-  console.table(paths);
   return {
     mode: isEnvProduction ? "production" : isEnvDevelopment && "development",
     devtool: isEnvProduction ? false : "cheap-module-source-map",
@@ -117,28 +114,12 @@ module.exports = function (webpackEnv, robConfig) {
     module: {
       rules: [
         {
-          test: /\.m?js$/,
+          test: /\.(js|jsx)$/,
           exclude: /(node_modules)/,
           use: {
             // `.swcrc` can be used to configure swc
             loader: "swc-loader",
-            options: {
-              jsc: {
-                parser: {
-                  syntax: "ecmascript",
-                  jsx: true,
-                },
-                transform: {
-                  react: {
-                    pragma: "React.createElement",
-                    pragmaFrag: "React.Fragment",
-                    throwIfNamespace: true,
-                    development: false,
-                    useBuiltins: false,
-                  },
-                },
-              },
-            },
+            options: swcOptions,
           },
         },
         {
