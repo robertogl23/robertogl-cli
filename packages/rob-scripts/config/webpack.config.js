@@ -7,7 +7,6 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const cssRegex = /\.css$/;
 let paths = pathsConfig;
 
-
 const swcOptions =  {
   jsc: {
     parser: {
@@ -62,13 +61,9 @@ module.exports = function (webpackEnv, robConfig) {
     devtool: isEnvProduction ? false : "cheap-module-source-map",
     entry: paths.appIndexJs,
     output: {
-      // The build folder.
       path: paths.appBuild,
-      // Add /* filename */ comments to generated require()s in the output.
       pathinfo: isEnvDevelopment,
       publicPath: "",
-      // There will be one main bundle, and one file per asynchronous chunk.
-      // In development, it does not produce real files.
       filename: isEnvProduction
         ? "static/js/[name].[contenthash:8].js"
         : isEnvDevelopment && "static/js/[name].js",
