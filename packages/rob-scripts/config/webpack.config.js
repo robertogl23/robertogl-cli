@@ -1,3 +1,4 @@
+"use strict";
 const pathsConfig = require("./paths");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
@@ -26,6 +27,68 @@ const swcOptions = {
     },
   },
 };
+
+const plugins = (isEnvProduction,) => [
+  new HtmlWebpackPlugin(
+    Object.assign(
+      {},
+      {
+        inject: true,
+        template: paths.appHtml,
+      },
+      isEnvProduction
+        ? {
+            minify: {
+              removeComments: true,
+              collapseWhitespace: true,
+              removeRedundantAttributes: true,
+              useShortDoctype: true,
+              removeEmptyAttributes: true,
+              removeStyleLinkTypeAttributes: true,
+              keepClosingSlash: true,
+              minifyJS: true,
+              minifyCSS: true,
+              minifyURLs: true,
+            },
+          }
+        : undefined
+    )
+  ),
+  new MiniCssExtractPlugin({
+    filename: "static/css/[name].[contenthash:8].css",
+    chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
+  }),
+
+  new WebpackManifestPlugin({
+    fileName: "asset-manifest.json",
+    publicPath: paths.publicUrlOrPath,
+    generate: (seed, files, entrypoints) => {
+      const manifestFiles = files.reduce((manifest, file) => {
+        manifest[file.name] = file.path;
+        return manifest;
+      }, seed);
+      const entrypointFiles = entrypoints.main.filter(
+        (fileName) => !fileName.endsWith(".map")
+      );
+
+      return {
+        files: manifestFiles,
+        entrypoints: entrypointFiles,
+      };
+    },
+  }),
+];
+const getPlugins = (isProduction) =>
+  isProduction
+    ? [
+        ...plugins,
+        new WorkboxPlugin.GenerateSW({
+          clientsClaim: true,
+          skipWaiting: true,
+        }),
+        new MyPlugin({ options: "" }),
+      ]
+    : plugins(isProduction);
 
 module.exports = function (webpackEnv, robConfig) {
   const isEnvDevelopment = webpackEnv === "development";
@@ -69,6 +132,11 @@ module.exports = function (webpackEnv, robConfig) {
       filename: isEnvProduction
         ? "static/js/[name].[contenthash:8].js"
         : isEnvDevelopment && "static/js/[name].js",
+      // There are also additional JS chunk files if you use code splitting.
+      chunkFilename: isEnvProduction
+        ? "static/js/[name].[contenthash:8].chunk.js"
+        : isEnvDevelopment && "static/js/[name].chunk.js",
+      assetModuleFilename: "static/media/[name].[hash][ext]",
     },
     optimization: {
       minimize: isEnvProduction,
@@ -134,59 +202,6 @@ module.exports = function (webpackEnv, robConfig) {
         },
       ],
     },
-    plugins: [
-      new HtmlWebpackPlugin(
-        Object.assign(
-          {},
-          {
-            inject: true,
-            template: paths.appHtml,
-          },
-          isEnvProduction
-            ? {
-                minify: {
-                  removeComments: true,
-                  collapseWhitespace: true,
-                  removeRedundantAttributes: true,
-                  useShortDoctype: true,
-                  removeEmptyAttributes: true,
-                  removeStyleLinkTypeAttributes: true,
-                  keepClosingSlash: true,
-                  minifyJS: true,
-                  minifyCSS: true,
-                  minifyURLs: true,
-                },
-              }
-            : undefined
-        )
-      ),
-      new MiniCssExtractPlugin({
-        filename: "static/css/[name].[contenthash:8].css",
-        chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
-      }),
-      new WorkboxPlugin.GenerateSW({
-        clientsClaim: true,
-        skipWaiting: true,
-      }),
-      new WebpackManifestPlugin({
-        fileName: "asset-manifest.json",
-        publicPath: paths.publicUrlOrPath,
-        generate: (seed, files, entrypoints) => {
-          const manifestFiles = files.reduce((manifest, file) => {
-            manifest[file.name] = file.path;
-            return manifest;
-          }, seed);
-          const entrypointFiles = entrypoints.main.filter(
-            (fileName) => !fileName.endsWith(".map")
-          );
-
-          return {
-            files: manifestFiles,
-            entrypoints: entrypointFiles,
-          };
-        },
-      }),
-      new MyPlugin({ options: '' })
-    ],
+    plugins: getPlugins(isEnvProduction),
   };
 };
