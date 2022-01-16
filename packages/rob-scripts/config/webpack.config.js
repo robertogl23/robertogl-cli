@@ -3,11 +3,13 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-
+const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
+const MyPlugin = require("../utils/hello-word-plugin");
+const WorkboxPlugin = require("workbox-webpack-plugin");
 const cssRegex = /\.css$/;
 let paths = pathsConfig;
 
-const swcOptions =  {
+const swcOptions = {
   jsc: {
     parser: {
       syntax: "ecmascript",
@@ -48,7 +50,7 @@ module.exports = function (webpackEnv, robConfig) {
             exclude: /(node_modules)/,
             use: {
               loader: "swc-loader",
-              options:swcOptions,
+              options: swcOptions,
             },
           },
         ],
@@ -162,6 +164,29 @@ module.exports = function (webpackEnv, robConfig) {
         filename: "static/css/[name].[contenthash:8].css",
         chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
       }),
+      new WorkboxPlugin.GenerateSW({
+        clientsClaim: true,
+        skipWaiting: true,
+      }),
+      new WebpackManifestPlugin({
+        fileName: "asset-manifest.json",
+        publicPath: paths.publicUrlOrPath,
+        generate: (seed, files, entrypoints) => {
+          const manifestFiles = files.reduce((manifest, file) => {
+            manifest[file.name] = file.path;
+            return manifest;
+          }, seed);
+          const entrypointFiles = entrypoints.main.filter(
+            (fileName) => !fileName.endsWith(".map")
+          );
+
+          return {
+            files: manifestFiles,
+            entrypoints: entrypointFiles,
+          };
+        },
+      }),
+      new MyPlugin({ options: '' })
     ],
   };
 };
