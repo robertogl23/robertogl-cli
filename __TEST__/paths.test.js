@@ -26,7 +26,3 @@ test("Validar ruta de appHtml", () => {
   );
   expect(newPaths(testConfig.pathsFiles,true).appHtml).toBe(html);
 });
-
-test("Validar ruta de appIndexJs de produccion", () => {
-  expect(newPaths(testConfig.pathsFiles,false).appIndexJs).toBe(indexJs);
-});
