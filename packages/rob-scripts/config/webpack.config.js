@@ -25,11 +25,49 @@ const swcOptions = {
     },
     transform: {
       react: {
+        runtime: "automatic",
         pragma: "React.createElement",
         pragmaFrag: "React.Fragment",
         throwIfNamespace: true,
         development: false,
         useBuiltins: false,
+      },
+      optimizer: {
+        globals: {
+          vars: {
+            __DEBUG__: "true",
+          },
+        },
+      },
+    },
+  },
+};
+
+const swcTSOptions = {
+  jsc: {
+    parser: {
+      syntax: "typescript",
+      tsx: true,
+      decorators: true,
+      dynamicImport: true,
+    },
+    transform: {
+      legacyDecorator: true,
+      decoratorMetadata: true,
+      react: {
+        runtime: "automatic",
+        pragma: "React.createElement",
+        pragmaFrag: "React.Fragment",
+        throwIfNamespace: true,
+        development: false,
+        useBuiltins: false,
+      },
+      optimizer: {
+        globals: {
+          vars: {
+            __DEBUG__: "true",
+          },
+        },
       },
     },
   },
@@ -133,8 +171,9 @@ module.exports = function (webpackEnv, robConfig) {
       },
     };
   }
+
   paths = Object.assign(paths, robConfig);
-  console.log("publicUrlOrPath: ", paths.publicUrlOrPath);
+  
   return {
     mode: isEnvProduction ? "production" : isEnvDevelopment && "development",
     devtool: isEnvProduction ? false : "cheap-module-source-map",
@@ -196,9 +235,16 @@ module.exports = function (webpackEnv, robConfig) {
           test: /\.(js|jsx)$/,
           exclude: /(node_modules)/,
           use: {
-            // `.swcrc` can be used to configure swc
             loader: "swc-loader",
             options: swcOptions,
+          },
+        },
+        {
+          test: /\.(ts|tsx)$/,
+          exclude: /(node_modules)/,
+          use: {
+            loader: "swc-loader",
+            options: swcTSOptions,
           },
         },
 
@@ -207,24 +253,18 @@ module.exports = function (webpackEnv, robConfig) {
           exclude: cssModuleRegex,
           use: getStyleLoaders({
             importLoaders: 1,
-            sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
+            sourceMap: true,
             modules: {
               mode: "icss",
             },
           }),
-          // Don't consider CSS imports dead code even if the
-          // containing package claims to have no side effects.
-          // Remove this when webpack adds a warning or an error for this.
-          // See https://github.com/webpack/webpack/issues/6571
           sideEffects: true,
         },
-        // Adds support for CSS Modules (https://github.com/css-modules/css-modules)
-        // using the extension .module.css
         {
           test: cssModuleRegex,
           use: getStyleLoaders({
             importLoaders: 1,
-            sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
+            sourceMap: true,
             modules: {
               mode: "local",
               getLocalIdent: getCSSModuleLocalIdent,
