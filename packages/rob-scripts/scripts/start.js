@@ -33,7 +33,7 @@ const devServerOptions = {
   },
   historyApiFallback: true,
 };
-console.log(paths.appPublic);
+
 const server = new WebpackDevServer(devServerOptions, compiler);
 
 const runServer = async () => {
