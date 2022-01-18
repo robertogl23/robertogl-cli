@@ -1,13 +1,9 @@
 const { resolveApp,resolveOwn} = require("./reselve-app-path");
 const isTempleteRun = require("./is-templete-run");
-const getPublicUrlOrPath = require("../utils/getPublicUrlPath");
 
 const buildPath = process.env.BUILD_PATH || "build";
-const publicUrlOrPath = getPublicUrlOrPath(
-  process.env.NODE_ENV === 'development',
-  require(resolveApp('package.json')).homepage,
-  process.env.PUBLIC_URL
-);
+console.log(process.env.NODE_ENV)
+const publicUrlOrPath = "";
 module.exports = {
   appPath: resolveApp("."),
   appBuild: resolveApp(buildPath),
@@ -32,7 +28,7 @@ if (
     appIndexJs: resolveOwn(`${templatePath}/index.js`),
     // appIndexJs: resolveOwn(`${templatePath}/src/index.js`),
     appPackageJson: resolveOwn(`${templatePath}/package.json`),
-    appSrc: resolveOwn("src"),
+    appSrc: resolveOwn(`${templatePath}/src`),
     appRobConfig: resolveOwn(`${templatePath}/robconfig.json`),
     publicUrlOrPath
   };
