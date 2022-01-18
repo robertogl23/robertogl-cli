@@ -1,6 +1,6 @@
 {
   "name": "rob-scripts",
-  "version": "1.4.5",
+  "version": "1.5.1",
   "description": "Configuracion webpack",
   "license": "MIT",
   "engines": {
@@ -24,7 +24,7 @@
     "fs-extra": "^10.0.0",
     "html-webpack-plugin": "^5.5.0",
     "loader-utils": "^3.2.0",
-    "mini-css-extract-plugin": "^2.5.0",
+    "mini-css-extract-plugin": "^2.4.5",
     "postcss": "^8.4.5",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-loader": "^6.2.1",
@@ -39,8 +39,5 @@
     "workbox-webpack-plugin": "^6.4.2"
   },
   "browserslist": "> 0.25%, not dead, not ie 11",
-  "devDependencies": {},
-  "resolutions": {
-    "mini-css-extract-plugin": "2.5.0"
-  }
+  "devDependencies": {}
 }

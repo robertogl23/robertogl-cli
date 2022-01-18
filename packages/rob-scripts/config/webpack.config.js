@@ -5,7 +5,7 @@ const pathsConfig = require("./paths");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin").default;
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const MyPlugin = require("../utils/hello-word-plugin");
 const WorkboxPlugin = require("workbox-webpack-plugin");
@@ -120,7 +120,7 @@ module.exports = function (webpackEnv, robConfig) {
               "postcss-normalize",
             ],
           },
-          sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
+          sourceMap: true,
         },
       },
     ].filter(Boolean);
@@ -129,7 +129,7 @@ module.exports = function (webpackEnv, robConfig) {
         {
           loader: require.resolve("resolve-url-loader"),
           options: {
-            sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
+            sourceMap: true,
             root: paths.appSrc,
           },
         },
@@ -173,7 +173,8 @@ module.exports = function (webpackEnv, robConfig) {
   }
 
   paths = Object.assign(paths, robConfig);
-  
+
+  console.log(paths.publicUrlOrPath);
   return {
     mode: isEnvProduction ? "production" : isEnvDevelopment && "development",
     devtool: isEnvProduction ? false : "cheap-module-source-map",
@@ -190,6 +191,9 @@ module.exports = function (webpackEnv, robConfig) {
         ? "static/js/[name].[contenthash:8].chunk.js"
         : isEnvDevelopment && "static/js/[name].chunk.js",
       assetModuleFilename: "static/media/[name].[hash][ext]",
+    },
+    resolve: {
+      extensions: ['.ts', '.js', '.jsx', '.tsx', '.json'],
     },
     optimization: {
       minimize: isEnvProduction,
@@ -272,8 +276,12 @@ module.exports = function (webpackEnv, robConfig) {
           }),
         },
         {
-          type: "asset",
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          type: 'asset/resource',
+        },
+        {
+          test: /\.(woff|woff2|eot|ttf|otf)$/i,
+          type: 'asset/resource',
         },
       ],
     },
